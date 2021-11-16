@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:midterm_app/models/form_model.dart';
+import 'package:midterm_app/pages/Home.dart';
 import 'package:provider/provider.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LogIn extends StatelessWidget {
   @override
@@ -40,12 +43,14 @@ class LogInForm extends StatelessWidget {
 }
 
 class TextForm extends StatefulWidget {
+  FirebaseAuth auth = FirebaseAuth.instance;
   @override
   _TextFormState createState() => _TextFormState();
 }
 
 class _TextFormState extends State<TextForm> {
   final _formKey = GlobalKey<FormState>();
+  final FirebaseAuth auth = FirebaseAuth.instance;
 
   String _Email = '';
 
@@ -101,18 +106,31 @@ class _TextFormState extends State<TextForm> {
             height: 10,
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
 
                 context.read<FormModel>().Email = _Email;
 
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text('Log in success'),
-                ));
-
-                Navigator.pop(context);
+//                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+//                  content: Text('Log in success'),
+//                ));
+//
+//                Navigator.pop(context);
               }
+              try {
+                UserCredential userCredential = await FirebaseAuth.instance
+                    .signInWithEmailAndPassword(
+                        email: "winaiza@gmail.com", password: "123456");
+              } on FirebaseAuthException catch (e) {
+                if (e.code == 'user-not-found') {
+                  print('No user found for that email.');
+                } else if (e.code == 'wrong-password') {
+                  print('Wrong password provided for that user.');
+                }
+              }
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => Home()));
             },
             child: Text('Log In'),
             style: ElevatedButton.styleFrom(

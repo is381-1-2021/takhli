@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:midterm_app/models/task_model.dart';
+import 'package:midterm_app/controllers/product_controller.dart';
 import 'package:midterm_app/pages/TaskOverview.dart';
 import 'package:provider/provider.dart';
 
@@ -21,12 +21,11 @@ import 'pages/home.dart';
 import 'pages/monthly_mood.dart';
 import 'services/services.dart';
 
+import 'package:firebase_auth/firebase_auth.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  var services = FirebaseServices();
-  var controller = NoteController(services);
-  var controller2 = TaskController(services);
 
   runApp(
     MultiProvider(
@@ -38,27 +37,26 @@ void main() async {
           create: (context) => FormModel(),
         ),
         ChangeNotifierProvider(
-          create: (context) => PaymentModel(),
-        ),
-        ChangeNotifierProvider(
           create: (context) => NotesOperation(),
         ),
-        ChangeNotifierProvider(
-          create: (context) => TodoModel(),
-        ),
       ],
-      child: MyApp(controller: controller, controller2: controller2),
+      child: MyApp(),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  final NoteController controller;
-  final TaskController controller2;
-  MyApp({required this.controller, required this.controller2});
-
   @override
   Widget build(BuildContext context) {
+    FirebaseAuth auth = FirebaseAuth.instance;
+
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user == null) {
+        print('User is currently signed out!');
+      } else {
+        print('User is signed in!');
+      }
+    });
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
@@ -73,14 +71,15 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         '/1': (context) => LogIn(),
         '/2': (context) => Home(),
-        '/3': (context) => AllTask(controller: controller2),
+        '/3': (context) => AllTask(),
         '/4': (context) => TodoEntryScreen(),
         '/5': (context) => ProductCatalog(),
-        '/6': (context) => ConfirmPayment(),
+        '/6': (context) => MakeOrder(),
         '/7': (context) => DailyMood(),
         '/8': (context) => MonthlyMood(),
         '/9': (context) => AddQuote(),
-        '/10': (context) => AllQuote(controller: controller),
+        '/10': (context) => AllQuote(),
+        '/11': (context) => ShowListProduct(),
       },
     );
   }

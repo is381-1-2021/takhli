@@ -4,22 +4,7 @@ import 'package:midterm_app/models/Task.dart';
 import 'package:provider/provider.dart';
 import 'package:midterm_app/models/TaskOperation.dart';
 import 'TaskEdit.dart';
-
-// class TodoScreen extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text("TO DO LIST"),
-//       ),
-//       body: TodoList(),
-//       floatingActionButton: FloatingActionButton(
-//         child: Icon(Icons.add),
-//         onPressed: () => {Navigator.pushNamed(context, "/4")},
-//       ),
-//     );
-//   }
-// }
+import 'package:midterm_app/services/services.dart';
 
 // class TodoList extends StatelessWidget {
 //   @override
@@ -62,10 +47,6 @@ import 'TaskEdit.dart';
 // }
 
 class AllTask extends StatefulWidget {
-  final TaskController controller;
-
-  AllTask({required this.controller});
-
   @override
   _AllTaskState createState() => _AllTaskState();
 }
@@ -73,17 +54,19 @@ class AllTask extends StatefulWidget {
 class _AllTaskState extends State<AllTask> {
   List<Task> tasks = List.empty();
   bool isLoading = false;
-
+  var services = FirebaseServices();
+  var controller;
   void initState() {
     super.initState();
+    controller = TaskController(services);
 
-    widget.controller.onSync.listen(
+    controller.onSync.listen(
       (bool syncState) => setState(() => isLoading = syncState),
     );
   }
 
   void _getTasks() async {
-    var newTasks = await widget.controller.fetchTasks();
+    var newTasks = await controller.fetchTasks();
 
     setState(() => tasks = newTasks);
   }
@@ -102,35 +85,28 @@ class _AllTaskState extends State<AllTask> {
             );
           },
         );
-  //UI ของมิดเทอม
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
         floatingActionButton: FloatingActionButton(
           onPressed: _getTasks,
-          //() {
-          //  Navigator.pushNamed(context, '/9');
-          //},
           child: Icon(
-            Icons.add,
+            Icons.search,
             size: 30,
           ),
         ),
         appBar: AppBar(
           title: Text('All your tasks'),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.add),
+              onPressed: () {
+                Navigator.pushNamed(context, '/4');
+              },
+            ),
+          ],
         ),
-        body: Center(child: body)
-        //Consumer<NotesOperation>(
-        //  builder: (context, NotesOperation data, child) {
-        //    return ListView.builder(
-        //      itemCount: data.getNotes.length,
-        //      itemBuilder: (context, index) {
-        //        return NotesCard(data.getNotes[index]);
-        //      },
-        //    );
-        //  },
-        //),
-        );
+        body: Center(child: body));
   }
 }

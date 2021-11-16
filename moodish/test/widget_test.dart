@@ -17,9 +17,7 @@ void main() {
     // Build our app and trigger a frame.
     var services = FirebaseServices();
     var controller = NoteController(services);
-    await tester.pumpWidget(MyApp(
-      controller: controller,
-    ));
+    await tester.pumpWidget(MyApp());
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);
