@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:midterm_app/models/NotesOperation.dart';
-import 'package:provider/provider.dart';
+//import 'package:midterm_app/models/NotesOperation.dart';
+//import 'package:provider/provider.dart';
 
 class AddQuote extends StatelessWidget {
   @override
@@ -53,7 +53,9 @@ class AddQuote extends StatelessWidget {
                   };
                   FirebaseFirestore.instance
                       .collection("moodish_quotes")
-                      .add(data);
+                      .add(data)
+                      .then((value) => print("New Quote Added"))
+                      .catchError((error) => print("Failed to add quote!!"));
                   Navigator.pop(context);
                 },
                 child: Text('Add Quote'),

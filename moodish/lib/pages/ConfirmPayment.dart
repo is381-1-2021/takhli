@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:midterm_app/models/formpayment_model.dart';
+//import 'package:midterm_app/models/formpayment_model.dart';
 import 'package:midterm_app/pages/ProductDetail.dart';
-import 'package:provider/provider.dart';
-import 'package:firebase_core/firebase_core.dart';
+//import 'package:provider/provider.dart';
+//import 'package:firebase_core/firebase_core.dart';
 
 class MakeOrder extends StatelessWidget {
   @override
@@ -13,10 +13,36 @@ class MakeOrder extends StatelessWidget {
         title: Text('Make order'),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
-            SizedBox(height: 5.0),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                shape: CircleBorder(),
+                primary: Color(0xFF9ADCF1),
+              ),
+              child: Container(
+                width: 80,
+                height: 80,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(shape: BoxShape.circle),
+                child: Text(
+                  '1',
+                  style: TextStyle(fontSize: 30),
+                ),
+              ),
+              onPressed: () {},
+            ),
+            SizedBox(height: 20),
+            Text(
+              'Order Form',
+              style: TextStyle(
+                fontSize: 30,
+                fontFamily: 'Montserrat',
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 20.0),
             FormConfirm(),
           ],
         ),
@@ -50,7 +76,7 @@ class _FormConfirmState extends State<FormConfirm> {
           TextFormField(
             controller: itemName,
             decoration: InputDecoration(
-              icon: Icon(Icons.account_circle_rounded),
+              icon: Icon(Icons.menu_book_rounded),
               hintText: 'type product name',
               labelText: 'Select Product',
             ),
@@ -63,7 +89,7 @@ class _FormConfirmState extends State<FormConfirm> {
           TextFormField(
             controller: amount,
             decoration: InputDecoration(
-              icon: Icon(Icons.access_time_rounded),
+              icon: Icon(Icons.money_rounded),
               hintText: 'amount',
               labelText: 'Amount',
             ),
@@ -73,42 +99,24 @@ class _FormConfirmState extends State<FormConfirm> {
               }
             },
           ),
-          TextFormField(
-            controller: email,
-            decoration: InputDecoration(
-              icon: Icon(Icons.paste_rounded),
-              hintText: 'Your E-mail',
-              labelText: 'E-mail',
-            ),
-            validator: (email) {
-              if (email == null || email.isEmpty) {
-                return 'Please enter your E-mail';
-              }
-            },
-            onSaved: (email) {
-              email = email!;
-            },
-          ),
           SizedBox(height: 15.0),
           ElevatedButton(
             onPressed: () {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
+
                 Map<String, dynamic> data = {
                   "itemName": itemName.text,
                   "amount": amount.text,
-                  "email": email.text,
                   "status": "waiting",
                   "order_date": DateTime.now()
                 };
                 FirebaseFirestore.instance
                     .collection("moodish_order")
-                    .add(data);
+                    .add(data)
+                    .then((value) => print("New Order Added"))
+                    .catchError((error) => print("Failed to add order!!"));
 
-                //  context.read<PaymentModel>().name = itemName;
-                //  context.read<PaymentModel>().orderref = _orderref;
-                //  context.read<PaymentModel>().datetime = _datetime;
-                //  context.read<PaymentModel>().amount = amount;
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => PayandGo()));
               }

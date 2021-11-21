@@ -1,12 +1,26 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:midterm_app/models/form_model.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatelessWidget {
+  FirebaseAuth auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color(0xFF8B82D0),
+        elevation: 0,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.account_circle_outlined),
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, '/1');
+            },
+          ),
+        ],
+      ),
       body: Stack(
         children: <Widget>[
           Container(
@@ -21,13 +35,7 @@ class Home extends StatelessWidget {
           SafeArea(
             child: Column(
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(left: 10.0, right: 10),
-                  child: Image.asset(
-                    'assets/userpic.PNG',
-                    width: 125,
-                  ),
-                ),
+                SizedBox(height: 10),
                 Text(
                   'Welcome to Moodish',
                   style: TextStyle(
@@ -42,6 +50,10 @@ class Home extends StatelessWidget {
                   child: Consumer<FormModel>(
                     builder: (context, model, child) {
                       return Text(
+                        //ที่เพิ่มใหม่
+                        //   auth.currentUser!.email == null
+                        //     ? "not login"
+                        //     : auth.currentUser!.email!
                         'Email - ${model.Email}',
                         style: TextStyle(fontSize: 20, color: Colors.white),
                       );
@@ -65,7 +77,13 @@ class Home extends StatelessWidget {
                       ),
                       InkWell(
                         onTap: () {
-                          Navigator.pushNamed(context, '/5');
+                          if (context.read<FormModel>().isLogin) {
+                            Navigator.pushNamed(context, '/5');
+                            return;
+                          }
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('You have not login yet.'),
+                          ));
                         },
                         child: Container(
                           child: Category(
@@ -76,7 +94,14 @@ class Home extends StatelessWidget {
                       ),
                       InkWell(
                         onTap: () {
-                          Navigator.pushNamed(context, '/8');
+                          //edit
+                          if (context.read<FormModel>().isLogout) {
+                            Navigator.pushNamed(context, '/8');
+                            return;
+                          }
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('You have not login yet.'),
+                          ));
                         },
                         child: Container(
                           child: Category(
@@ -101,10 +126,11 @@ class Home extends StatelessWidget {
                 ),
                 ElevatedButton.icon(
                   onPressed: () async {
-                    await Navigator.pushNamed(context, '/1');
+                    FirebaseAuth.instance.signOut();
+                    Navigator.popUntil(context, ModalRoute.withName('/1'));
                   },
                   icon: Icon(Icons.login),
-                  label: Text('Login/Logout'),
+                  label: Text('Logout'),
                   style: ElevatedButton.styleFrom(
                     primary: Color(0xFF5F478C),
                     fixedSize: Size(250, 50),
