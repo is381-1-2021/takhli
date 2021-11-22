@@ -16,7 +16,7 @@ class Home extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.account_circle_outlined),
             onPressed: () {
-              Navigator.pushReplacementNamed(context, '/1');
+              Navigator.pushReplacementNamed(context, '/15');
             },
           ),
         ],
@@ -66,7 +66,13 @@ class Home extends StatelessWidget {
                     children: <Widget>[
                       InkWell(
                         onTap: () {
-                          Navigator.pushNamed(context, '/3');
+                          if (context.read<FormModel>().isLogin) {
+                            Navigator.pushNamed(context, '/3');
+                            return;
+                          }
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('You have not login yet.'),
+                          ));
                         },
                         child: Container(
                           child: Category(
@@ -94,8 +100,7 @@ class Home extends StatelessWidget {
                       ),
                       InkWell(
                         onTap: () {
-                          //edit
-                          if (context.read<FormModel>().isLogout) {
+                          if (context.read<FormModel>().isLogin) {
                             Navigator.pushNamed(context, '/8');
                             return;
                           }
@@ -112,7 +117,13 @@ class Home extends StatelessWidget {
                       ),
                       InkWell(
                         onTap: () {
-                          Navigator.pushNamed(context, '/10');
+                          if (context.read<FormModel>().isLogin) {
+                            Navigator.pushNamed(context, '/10');
+                            return;
+                          }
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('You have not login yet.'),
+                          ));
                         },
                         child: Container(
                           child: Category(
@@ -127,7 +138,7 @@ class Home extends StatelessWidget {
                 ElevatedButton.icon(
                   onPressed: () async {
                     FirebaseAuth.instance.signOut();
-                    Navigator.popUntil(context, ModalRoute.withName('/1'));
+                    Navigator.pushNamed(context, '/15');
                   },
                   icon: Icon(Icons.login),
                   label: Text('Logout'),

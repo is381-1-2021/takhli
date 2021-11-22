@@ -1,7 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:midterm_app/pages/Account.dart';
 //import 'package:midterm_app/controllers/product_controller.dart';
 import 'package:midterm_app/pages/OrderList.dart';
+import 'package:midterm_app/pages/Register.dart';
 import 'package:midterm_app/pages/TaskOverview.dart';
 import 'package:midterm_app/pages/splash.dart';
 import 'package:provider/provider.dart';
@@ -71,7 +73,7 @@ class MyApp extends StatelessWidget {
           bodyText2: TextStyle(fontFamily: 'Montserrat', color: Colors.black),
         ),
       ),
-      initialRoute: '/splash',
+      initialRoute: '/2',
       routes: <String, WidgetBuilder>{
         '/1': (context) => LogIn(),
         '/2': (context) => Home(),
@@ -86,7 +88,9 @@ class MyApp extends StatelessWidget {
         '/11': (context) => ShowListProduct(),
         '/12': (context) => OrderList(),
         '/13': (context) => TaskEdit(),
-        '/splash': (context) => splash(),
+        '/14': (context) => RegisterScreen(),
+        '/15': (context) => Account(),
+//        '/splash': (context) => splash(),
 //        '/auth': (context) => AuthenticationWrapper(),
       },
     );

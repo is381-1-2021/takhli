@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 //Login form
 class FormModel extends ChangeNotifier {
   String? _Email;
+  String? _Password;
+  get Password => this._Password;
+
+  set Password(value) => this._Password = value;
   bool isLogin = false;
   bool isLogout = true;
 
@@ -27,10 +31,3 @@ class FormModel extends ChangeNotifier {
     notifyListeners();
   }
 }
-//  get Password => this._Password;
-//
-//  set Password(value) {
-//    this._Password = value;//
-//    notifyListeners();
-//  }
-
